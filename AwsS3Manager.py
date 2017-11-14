@@ -18,8 +18,11 @@ class AwsS3Manager(object):
                   				 )
 		self.s3 = self.__session.resource('s3')
 
-	def upload_file(self,file_name,filepath):
-		data = open(filepath, 'rb')
+	def upload_file(self,file_name,filepath=None, filedata=None):
+		if filepath != None:
+			data = open(filepath, 'rb')
+		else:
+			data = filedata
 		object_ = self.s3.Bucket(self.__bucket_name).put_object(Key=file_name, Body=data, ACL='public-read')
 		s3client = self.__session.client('s3')
 		url = s3client.generate_presigned_url('put_object', Params={'Bucket': self.__bucket_name, 'Key': object_.key})

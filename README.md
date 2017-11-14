@@ -11,7 +11,11 @@ Steps to get started:-
 4. Just instanciate it where ever you wnat in you project
     eg:- aws_obj = AwsS3Manager('your bucket name')
 5. Now to upload object just call
-	result = aws_obj.upload_file('file_name','filepath')
+	result = aws_obj.upload_file(file_name = 'file_name',filepath = 'filepath',filedata = None)
+	or
+	result = aws_obj.upload_file(file_name = 'file_name',filepath = None,filedata = data)
+	where data is file data
+
 6. In response result will have url to the file uploaded and the key name of file in bucket
 
 
