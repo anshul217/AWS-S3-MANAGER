@@ -1,0 +1,7 @@
+README.md
+setup.py
+s3manager/__init__.py
+s3manager.egg-info/PKG-INFO
+s3manager.egg-info/SOURCES.txt
+s3manager.egg-info/dependency_links.txt
+s3manager.egg-info/top_level.txt
