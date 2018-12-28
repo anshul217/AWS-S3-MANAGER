@@ -4,8 +4,11 @@
 ###################################################
 
 import os
+import zipfile
 from mimetypes import MimeTypes
 
+import boto3
+import botocore
 from boto3.session import Session
 
 
@@ -40,7 +43,8 @@ class S3manager(object):
         object_ = self.s3.Bucket(self.__bucket_name).put_object(Key=file_name, Body=data, ACL=acl,
                                                                 ContentType=mime_type)
         s3client = self.__session.client('s3')
-        url = s3client.generate_presigned_url('put_object', Params={'Bucket': self.__bucket_name, 'Key': object_.key})
+        url = s3client.generate_presigned_url(
+            'put_object', Params={'Bucket': self.__bucket_name, 'Key': object_.key})
         return {"url": url, "key": object_.key,
                 "public_url": "https://" + self.__bucket_name + ".s3.amazonaws.com/" + file_name}
 
@@ -50,3 +54,36 @@ class S3manager(object):
         obj = s3.Object(self.__bucket_name, file_name)
         obj.delete()
         return True
+
+    def download_file(self, file_name):
+        """This method will download the file in your current directory.
+        """
+        try:
+                self.s3.Bucket(self.__bucket_name).download_file(file_name, os.path.join(os.getcwd(), str(file_name.split('/')[-1])))
+        except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    print("The object does not exist.")
+                else:
+                    raise
+
+    def download_files_in_zip(self, file_object_key_list, zip_file_name):
+        """This method will download the file and will make zip current directory.
+        @:param file_object_key_list :- this is list of filekeyobject of s3.
+        """
+        for KEY in file_object_key_list:
+            try:
+                self.s3.Bucket(self.__bucket_name).download_file(KEY, KEY.split('/')[-1])
+            except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    print("The object does not exist.")
+                else:
+                    raise
+        zf = zipfile.ZipFile(os.path.join(os.getcwd(), str(zip_file_name + ".zip")), "w")
+        for KEY in file_object_key_list:
+            KEY = KEY.split('/')[-1]
+            zf.write(KEY)
+        zf.close()
+        for KEY in file_object_key_list:
+            os.remove(KEY.split('/')[-1])
+
+        return str(zip_file_name + ".zip")

@@ -4,11 +4,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
     name='s3manager',
-    version='1.2',
+    version='1.4',
     packages=setuptools.find_packages(),
     author="Anshul Gupta",
     author_email="anshulgupta217@gmail.com",
-    description="This packages helps to upload and delete files to s3.",
+    description="This packages helps to upload, download zip of multiple files, delete file from s3.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/anshul217/AWS-S3-MANAGER/",
